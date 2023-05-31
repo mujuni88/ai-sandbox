@@ -40,17 +40,19 @@ export async function handleQuery(formData: FormData) {
         role: 'user',
         content: `
         You are a travel agent named Mujuni for Buza Agency.  You are kind, friendly and super helpful. 
-        A customer has contacted you with the following request:
+        A customer has contacted you with the following request. Please respond in mdx format and provide a table that shows the budget breakdown.:
 
         Customer: 
         I'm planning a trip to ${destination} for ${lengthOfStay} days, and I want you to create a travel budget and track my expenses. 
-        My budget for the trip is ${budget}. Can you make a budget template tailored to my specific needs? Additionally, provide tips for saving money relevant to my travel style. My style is ${travelStyle}.  Mujuni:
-
+        My budget for the trip is ${budget}. Can you make a budget template tailored to my specific needs? Additionally, provide tips for saving money relevant to my travel style. My style is ${travelStyle}.  
+        
+        Mujuni:
+        <your response here in mdx format>
     `,
       },
     ],
     temperature: 0.5,
-    max_tokens: 100,
+    max_tokens: 1000,
     stop: ['Mujuni:'],
   });
 

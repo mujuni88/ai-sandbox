@@ -13,6 +13,8 @@ import { handleQuery } from '@/lib/openai';
 import { Metadata } from 'next';
 import { TravelStyle } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Suspense } from 'react';
+import AiResponseLoader from './ai-response-loader';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -65,7 +67,9 @@ export default async function TravelBudgetForm() {
         </CardContent>
       </Card>
 
-      <AiResponse />
+      <Suspense fallback={<AiResponseLoader />}>
+        <AiResponse />
+      </Suspense>
     </div>
   );
 }
