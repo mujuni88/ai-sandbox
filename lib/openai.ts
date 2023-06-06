@@ -1,65 +1,72 @@
 'use server';
-
-import { revalidatePath } from 'next/cache';
-import { Configuration, OpenAIApi } from 'openai';
-import { z } from 'zod';
-import { TravelStyle } from './constants';
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai';
+import { env } from '@/env';
+import { IncomingMessage } from 'http';
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-const QuerySchema = z.object({
-  destination: z.string().min(2).max(100),
-  lengthOfStay: z.number().int().min(1).max(30),
-  budget: z.number().int().min(5).max(10000),
-  travelStyle: z.enum(TravelStyle),
-});
+export async function getOpenAiStream(
+  messages: ChatCompletionRequestMessage[]
+): Promise<ReadableStream> {
+  const response = await openai.createChatCompletion(
+    {
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: `
+          Act as a travel agent for a customer. 
+          The name of the agency is Buza Agency. 
+          The goal is to make sure the customer receives the solution to her problem. 
+          
+          Walk the customer through a series of questions to find out what she needs.
+          Make sure to verify that the customer is satisfied with the solution.
 
-let choice: string = '';
-export async function handleQuery(formData: FormData) {
-  console.log(formData);
-  const _query = Object.fromEntries(
-    Array.from(formData.entries()).map(([k, v]) => {
-      if (k === 'budget' || k === 'lengthOfStay') {
-        return [k, parseInt(v as string)];
-      }
-
-      return [k, v];
-    })
+          Respond in markdown format.
+          `,
+        },
+        ...messages,
+      ],
+      temperature: 0.5,
+      stop: ['\n'],
+      stream: true,
+    },
+    { responseType: 'stream' }
   );
-  console.log(_query);
-  const { destination, lengthOfStay, budget, travelStyle } =
-    QuerySchema.parse(_query);
 
-  const completion = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [
-      {
-        role: 'user',
-        content: `
-        You are a travel agent named Mujuni for Buza Agency.  You are kind, friendly and super helpful. 
-        A customer has contacted you with the following request. Please respond in mdx format and provide a table that shows the budget breakdown.:
+  const incomingMessage = response.data as unknown as IncomingMessage;
 
-        Customer: 
-        I'm planning a trip to ${destination} for ${lengthOfStay} days, and I want you to create a travel budget and track my expenses. 
-        My budget for the trip is ${budget}. Can you make a budget template tailored to my specific needs? Additionally, provide tips for saving money relevant to my travel style. My style is ${travelStyle}.  
-        
-        Mujuni:
-        <your response here in mdx format>
-    `,
-      },
-    ],
-    temperature: 0.5,
-    max_tokens: 1000,
-    stop: ['Mujuni:'],
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    start(controller) {
+      incomingMessage.on('data', (chunk) => {
+        const lines = chunk
+          .toString()
+          .split('\n')
+          .filter((c: string) => Boolean(c.trim()));
+
+        for (const line of lines) {
+          const data = line.slice('data:'.length).trim();
+
+          if (data === '[DONE]') {
+            controller.close();
+            return;
+          }
+
+          try {
+            const json = JSON.parse(data);
+            const content = json.choices[0].delta?.content || '';
+            controller.enqueue(encoder.encode(content));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      });
+    },
   });
 
-  choice = completion.data.choices[0].message?.content ?? 'No response yet';
-  revalidatePath('/');
-}
-
-export async function getResponse() {
-  return choice;
+  return stream;
 }

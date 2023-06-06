@@ -1,11 +1,16 @@
-"use client"
-import { Button } from "./ui/button";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
-import { ButtonLoading } from "./ui/button-loading";
+'use client';
+import { Loader2 } from 'lucide-react';
+import { Button, ButtonProps } from './ui/button';
 
-export function SubmitButton({}) {
-  const {pending} = useFormStatus();
-  if(pending) return <ButtonLoading text="Submitting" />;
-  return <Button type="submit" disabled={pending}>Submit</Button>;
+interface SubmitButtonProps extends ButtonProps {
+  loading?: boolean;
 }
-  
+
+export function SubmitButton({ loading, ...props }: SubmitButtonProps) {
+  return (
+    <Button type="submit" disabled={loading} {...props}>
+      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+      Submit
+    </Button>
+  );
+}

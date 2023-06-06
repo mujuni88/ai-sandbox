@@ -1,15 +1,11 @@
 import { cn } from '@/lib/utils';
-import { getResponse } from '@/lib/openai';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-async function AiResponse() {
-  const choice = await getResponse();
+export default function AiResponse({ text }: { text: string }) {
   return (
-    <div className={cn('prose')}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{choice}</ReactMarkdown>
+    <div className={cn('prose mt-10')}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
     </div>
   );
 }
-
-export default AiResponse as unknown as React.FC;
