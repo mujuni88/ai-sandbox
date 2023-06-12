@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   return (
-    <main className="container">
+    <main className="container h-screen max-h-screen grid pt-16">
       <TravelBudgetForm />
     </main>
   );

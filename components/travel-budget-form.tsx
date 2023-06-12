@@ -2,7 +2,7 @@
 import AiResponse from '@/components/ai-response';
 import { SubmitButton } from '@/components/submit-button';
 import { Metadata } from 'next';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Textarea } from './ui/textarea';
 import { useChat } from './useChat/useChat';
 import { cn } from '@/lib/utils';
@@ -18,26 +18,8 @@ export default function TravelBudgetForm() {
   const { isLoading, messages, input } = state;
 
   return (
-    <div className="flex flex-col items-center w-full mr-auto ml-auto mt-6 md:w-1/2">
-      <Card className="w-full mb-5">
-        <CardHeader>
-          <CardTitle className="text-center">
-            What are you travel needs?
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Textarea
-              name="content"
-              id="content"
-              value={input}
-              onChange={(e) => actions.setInput(e.target.value)}
-            />
-            <SubmitButton disabled={isLoading} loading={isLoading} />
-          </form>
-        </CardContent>
-      </Card>
-      <div>
+    <div className="grid w-full grid-rows-[1fr_auto] mr-auto ml-auto pt-3 md:w-1/2">
+      <div className="flex overflow-auto">
         <div className="flex flex-col gap-2">
           {messages.map((msg) => (
             <div
@@ -55,6 +37,20 @@ export default function TravelBudgetForm() {
           ))}
         </div>
       </div>
+
+      <Card className="w-full mt-3 mb-8">
+        <CardContent className="pt-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <Textarea
+              name="content"
+              id="content"
+              value={input}
+              onChange={(e) => actions.setInput(e.target.value)}
+            />
+            <SubmitButton disabled={isLoading} loading={isLoading} />
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

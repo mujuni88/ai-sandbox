@@ -9,7 +9,6 @@ type Message = {
 type State = {
   input: string;
   messages: Message[];
-  streamedMessage: Message;
   isLoading: boolean;
 };
 
@@ -37,7 +36,7 @@ type Action =
       type: 'RESET';
     };
 
-const messages = [
+const messages: Message[] = [
   {
     content: "I'm traveling to Panama, please help\n",
     role: ChatCompletionResponseMessageRoleEnum.User,
@@ -48,7 +47,7 @@ const messages = [
     role: ChatCompletionResponseMessageRoleEnum.Assistant,
   },
 ];
-const reducer = (state: State, action: Action) => {
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_MESSAGE':
       return {
@@ -57,31 +56,48 @@ const reducer = (state: State, action: Action) => {
           ...state.messages,
           {
             ...action.payload,
-            id: `${state.messages.length}`,
+            id: `${action.payload.content.length}`,
           },
         ],
       };
     case 'SET_STREAMED_MESSAGE':
-      const prevStreamedMessage = state.messages.slice(-1)[0];
+      const prevStreamedMessage = state.messages.find(
+        (msg) => msg.id === STREAMED_MSG_ID
+      );
+
       const streamedMessage = {
         ...action.payload,
-        content: prevStreamedMessage?.content + action.payload.content,
+        content: (prevStreamedMessage?.content ?? '') + action.payload.content,
+        id: STREAMED_MSG_ID,
       };
 
       return {
         ...state,
-        streamedMessage,
-        messages: [...state.messages.slice(0, -1), streamedMessage],
+        messages: [
+          ...state.messages.filter((msg) => msg.id !== STREAMED_MSG_ID),
+          {
+            ...streamedMessage,
+          },
+        ],
       };
     case 'SET_IS_LOADING':
       if (action.payload === false && state.isLoading === true) {
+        const prevStreamedMessage = state.messages.find(
+          (msg) => msg.id === STREAMED_MSG_ID
+        );
+
         return {
           ...state,
-          streamedMessage: {
-            id: '',
-            content: '',
-            role: ChatCompletionResponseMessageRoleEnum.Assistant,
-          },
+          isLoading: action.payload,
+          messages: [
+            ...state.messages.filter((msg) => msg.id !== STREAMED_MSG_ID),
+            {
+              ...prevStreamedMessage,
+              content: prevStreamedMessage?.content ?? '',
+              id: `${prevStreamedMessage?.content.length}`,
+              role: ChatCompletionResponseMessageRoleEnum.Assistant,
+            },
+          ],
         };
       }
 
@@ -98,11 +114,6 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         messages: [],
-        streamedMessage: {
-          id: '',
-          content: '',
-          role: ChatCompletionResponseMessageRoleEnum.Assistant,
-        },
         isLoading: false,
       };
     default:
@@ -113,12 +124,7 @@ const reducer = (state: State, action: Action) => {
 export const useChat = () => {
   const [state, dispatch] = useReducer(reducer, {
     input: '',
-    messages: [...messages],
-    streamedMessage: {
-      id: '',
-      content: '',
-      role: ChatCompletionResponseMessageRoleEnum.Assistant,
-    },
+    messages,
     isLoading: false,
   });
 
@@ -165,15 +171,6 @@ export const useChat = () => {
     dispatch({ type: 'RESET' });
   }, [dispatch]);
 
-  const getChatBody = useCallback<
-    (messages: Message[]) => Omit<Message, 'id'>[]
-  >((messages) => {
-    return messages.map((message) => ({
-      content: message.content,
-      role: message.role,
-    }));
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setInput('');
@@ -193,7 +190,7 @@ export const useChat = () => {
     try {
       const completion = await fetch('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({ messages: getChatBody(latestMessages) }),
+        body: JSON.stringify({ messages: latestMessages }),
       });
 
       const reader = completion.body
