@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 
 export default function AiResponse({ text }: { text: string }) {
   return (
-    <div className={cn('prose mt-10')}>
+    <div className={cn('prose')}>
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
     </div>
   );

@@ -8,7 +8,12 @@ interface SubmitButtonProps extends ButtonProps {
 
 export function SubmitButton({ loading, ...props }: SubmitButtonProps) {
   return (
-    <Button type="submit" disabled={loading} {...props}>
+    <Button
+      type="submit"
+      className="bg-indigo-700"
+      disabled={loading}
+      {...props}
+    >
       {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
       Submit
     </Button>
