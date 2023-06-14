@@ -7,6 +7,7 @@ import { Textarea } from './ui/textarea';
 import { useChat } from './useChat/useChat';
 import { cn } from '@/lib/utils';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
+import { Bot, User } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -20,19 +21,20 @@ export default function TravelBudgetForm() {
   return (
     <div className="grid w-full grid-rows-[1fr_auto] mr-auto ml-auto pt-3 md:w-1/2">
       <div className="flex overflow-auto">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-6">
           {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn('flex gap-3 items-center', {
-                'bg-gray-100 p-5':
-                  msg.role === ChatCompletionRequestMessageRoleEnum.User,
-                'bg-indigo-100 p-5 justify-items-end flex-row-reverse':
-                  msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
-              })}
-            >
+            <div key={msg.id} className={cn('grid gap-3 grid-cols-[auto_1fr]')}>
               <Avatar initials={msg.role} role={msg.role} />
-              <AiResponse text={msg.content} />
+              <div
+                className={cn('flex gap-3 p-5 rounded-2xl shadow-md', {
+                  'bg-gray-100':
+                    msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
+                  'bg-indigo-100':
+                    msg.role === ChatCompletionRequestMessageRoleEnum.User,
+                })}
+              >
+                <AiResponse text={msg.content} />
+              </div>
             </div>
           ))}
         </div>
@@ -62,18 +64,19 @@ const Avatar = ({
   initials: string;
   role: ChatCompletionRequestMessageRoleEnum;
 }) => {
+  const user = role === ChatCompletionRequestMessageRoleEnum.User;
   return (
-    <p
+    <span
       className={cn(
         'text-center font-bold text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0',
         {
-          'bg-gray-500': role === ChatCompletionRequestMessageRoleEnum.User,
-          'bg-indigo-500':
+          'bg-gray-500':
             role === ChatCompletionRequestMessageRoleEnum.Assistant,
+          'bg-indigo-500': role === ChatCompletionRequestMessageRoleEnum.User,
         }
       )}
     >
-      {role.slice(0, 2).toUpperCase()}
-    </p>
+      {user ? <User className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
+    </span>
   );
 };
