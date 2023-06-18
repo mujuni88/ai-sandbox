@@ -16,11 +16,11 @@ export function SubmitButton({
   return (
     <Button
       type="submit"
-      className={cn('bg-indigo-800 flex items-center', className)}
+      className={cn('bg-indigo-500 flex items-center', className)}
       disabled={loading}
       {...props}
     >
-      {loading ? <Loader2 className="animate-spin" /> : <SentIcon />}
+      {loading ? <Loader2 className="animate-spin" /> : <SentIcon size={16} />}
     </Button>
   );
 }

@@ -74,7 +74,9 @@ export default function TravelBudgetForm() {
             size={'sm'}
             disabled={isLoading || !value}
             loading={isLoading}
-            className={cn('col-start-2 col-end-3 row-start-1 row-end-2 mr-5')}
+            className={cn(
+              'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40'
+            )}
           />
         </form>
       </div>
