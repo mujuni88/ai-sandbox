@@ -7,7 +7,6 @@ type Message = {
   role: ChatCompletionResponseMessageRoleEnum;
 };
 type State = {
-  input: string;
   messages: Message[];
   isLoading: boolean;
 };
@@ -29,10 +28,6 @@ type Action =
       payload: boolean;
     }
   | {
-      type: 'SET_INPUT';
-      payload: string;
-    }
-  | {
       type: 'RESET';
     };
 
@@ -47,7 +42,7 @@ const messages: Message[] = [
     role: ChatCompletionResponseMessageRoleEnum.Assistant,
   },
 ];
-const reducer = (state: State, action: Action): State => {
+export const chatReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_MESSAGE':
       return {
@@ -105,11 +100,6 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         isLoading: action.payload,
       };
-    case 'SET_INPUT':
-      return {
-        ...state,
-        input: action.payload,
-      };
     case 'RESET':
       return {
         ...state,
@@ -121,9 +111,10 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-export const useChat = () => {
+export type Reducer = typeof chatReducer;
+
+export const useChat = (reducer: Reducer = chatReducer) => {
   const [state, dispatch] = useReducer(reducer, {
-    input: '',
     messages,
     isLoading: false,
   });
@@ -160,20 +151,12 @@ export const useChat = () => {
     [dispatch]
   );
 
-  const setInput = useCallback(
-    (input: string) => {
-      dispatch({ type: 'SET_INPUT', payload: input });
-    },
-    [dispatch]
-  );
-
   const reset = useCallback(() => {
     dispatch({ type: 'RESET' });
   }, [dispatch]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setInput('');
     const formData = new FormData(e.currentTarget);
     const content = formData.get('content') as string;
 
@@ -225,7 +208,6 @@ export const useChat = () => {
       setCurrentMessage,
       setIsLoading,
       reset,
-      setInput,
     },
     handleSubmit,
   };

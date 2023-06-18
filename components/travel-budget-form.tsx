@@ -2,12 +2,12 @@
 import AiResponse from '@/components/ai-response';
 import { SubmitButton } from '@/components/submit-button';
 import { Metadata } from 'next';
-import { Card, CardContent } from './ui/card';
 import { Textarea } from './ui/textarea';
-import { useChat } from './useChat/useChat';
+import { useChat } from '../hooks/useChat';
 import { cn } from '@/lib/utils';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 import { Bot, User } from 'lucide-react';
+import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -15,8 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function TravelBudgetForm() {
-  const { state, handleSubmit, actions } = useChat();
-  const { isLoading, messages, input } = state;
+  const { state, handleSubmit } = useChat();
+  const { isLoading, messages } = state;
+  const { textAreaRef, handleChange, value, resetValue } =
+    useAutoResizeTextarea();
 
   return (
     <div className="grid w-full grid-rows-[1fr_auto] mr-auto ml-auto pt-3 md:w-1/2">
@@ -40,19 +42,42 @@ export default function TravelBudgetForm() {
         </div>
       </div>
 
-      <Card className="w-full mt-3 mb-8">
-        <CardContent className="pt-3">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Textarea
-              name="content"
-              id="content"
-              value={input}
-              onChange={(e) => actions.setInput(e.target.value)}
-            />
-            <SubmitButton disabled={isLoading} loading={isLoading} />
-          </form>
-        </CardContent>
-      </Card>
+      <div
+        className={cn(
+          'w-full my-6 p-1 rounded-xl shadow-md bg-white shadow-indigo-300/50'
+        )}
+      >
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+            resetValue();
+            textAreaRef.current?.focus();
+          }}
+          className="grid gap-3 grid-cols-[1fr_auto] place-items-center"
+        >
+          <Textarea
+            ref={textAreaRef}
+            name="content"
+            id="content"
+            placeholder="Send a message"
+            value={value}
+            onChange={handleChange}
+            rows={1}
+            className={cn(
+              'border-none max-h-52 resize-none overflow-auto p-3 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base'
+            )}
+            style={{
+              scrollbarColor: '#a0aec0 #edf2f7',
+            }}
+          />
+          <SubmitButton
+            size={'sm'}
+            disabled={isLoading || !value}
+            loading={isLoading}
+            className={cn('col-start-2 col-end-3 row-start-1 row-end-2 mr-5')}
+          />
+        </form>
+      </div>
     </div>
   );
 }
