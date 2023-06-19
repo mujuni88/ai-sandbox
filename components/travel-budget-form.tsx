@@ -21,25 +21,31 @@ export default function TravelBudgetForm() {
     useAutoResizeTextarea();
 
   return (
-    <div className="grid w-full grid-rows-[1fr_auto] mr-auto ml-auto pt-3 md:w-1/2">
-      <div className="flex overflow-auto">
-        <div className="flex flex-col gap-6">
-          {messages.map((msg) => (
-            <div key={msg.id} className={cn('grid gap-3 grid-cols-[auto_1fr]')}>
-              <Avatar initials={msg.role} role={msg.role} />
-              <div
-                className={cn('flex gap-3 p-5 rounded-2xl shadow-md', {
-                  'bg-gray-100':
+    <div className="grid w-full grid-rows-[1fr_auto] mx-auto bg-white/40 md:w-[60%] items-start p-8">
+      <div className="grid items-start gap-3">
+        {messages.map((msg) => (
+          <div key={msg.id} className={cn('grid gap-3 grid-cols-[auto_1fr]')}>
+            <Avatar initials={msg.role} role={msg.role} className="self-end" />
+            <div
+              className={cn('relative p-5 rounded-2xl rounded-bl-none', {
+                'bg-gray-200':
+                  msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
+                'bg-indigo-100':
+                  msg.role === ChatCompletionRequestMessageRoleEnum.User,
+              })}
+            >
+              <SpeechBubble
+                className={cn({
+                  'bg-gray-200':
                     msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
                   'bg-indigo-100':
                     msg.role === ChatCompletionRequestMessageRoleEnum.User,
                 })}
-              >
-                <AiResponse text={msg.content} />
-              </div>
+              />
+              <AiResponse text={msg.content} />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       <div
@@ -86,10 +92,12 @@ export default function TravelBudgetForm() {
 
 const Avatar = ({
   initials,
+  className,
   role,
 }: {
   initials: string;
   role: ChatCompletionRequestMessageRoleEnum;
+  className?: string;
 }) => {
   const user = role === ChatCompletionRequestMessageRoleEnum.User;
   return (
@@ -100,10 +108,28 @@ const Avatar = ({
           'bg-gray-500':
             role === ChatCompletionRequestMessageRoleEnum.Assistant,
           'bg-indigo-500': role === ChatCompletionRequestMessageRoleEnum.User,
-        }
+        },
+        className
       )}
     >
       {user ? <User className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
     </span>
   );
 };
+
+const SpeechBubble = ({
+  rootClassName,
+  className,
+}: {
+  rootClassName?: string;
+  className?: string;
+}) => (
+  <div className={cn('absolute bottom-0 -left-[0.7rem]', rootClassName)}>
+    <div
+      className={cn(
+        'w-3 h-3 clip-path-polygon-[100%_0,_0%_100%,_100%_100%]',
+        className
+      )}
+    />
+  </div>
+);
