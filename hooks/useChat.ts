@@ -1,5 +1,5 @@
 import { ChatCompletionResponseMessageRoleEnum } from 'openai';
-import { useCallback, useReducer } from 'react';
+import { useCallback, useReducer, useRef } from 'react';
 
 type Message = {
   id?: string;
@@ -114,6 +114,7 @@ export const chatReducer = (state: State, action: Action): State => {
 export type Reducer = typeof chatReducer;
 
 export const useChat = (reducer: Reducer = chatReducer) => {
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [state, dispatch] = useReducer(reducer, {
     messages,
     isLoading: false,
@@ -171,9 +172,11 @@ export const useChat = (reducer: Reducer = chatReducer) => {
 
     setIsLoading(true);
     try {
+      abortControllerRef.current = new AbortController();
       const completion = await fetch('/api/chat', {
         method: 'POST',
         body: JSON.stringify({ messages: latestMessages }),
+        signal: abortControllerRef.current.signal,
       });
 
       const reader = completion.body
@@ -193,6 +196,10 @@ export const useChat = (reducer: Reducer = chatReducer) => {
           content: value,
           role: ChatCompletionResponseMessageRoleEnum.Assistant,
         });
+
+        if (abortControllerRef.current?.signal.aborted) {
+          break;
+        }
       }
     } catch (error) {
       console.error(error);
@@ -210,5 +217,8 @@ export const useChat = (reducer: Reducer = chatReducer) => {
       reset,
     },
     handleSubmit,
+    stopStream: () => {
+      abortControllerRef.current?.abort();
+    },
   };
 };

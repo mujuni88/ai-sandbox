@@ -17,12 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          inter.className,
-          'bg-repeat heropattern-hideout-gray-200 bg-gray-200/50'
-        )}
-      >
+      <body className={cn(inter.className, '')}>
         <PageHeader />
         {children}
       </body>

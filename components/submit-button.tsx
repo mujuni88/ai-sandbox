@@ -17,7 +17,6 @@ export function SubmitButton({
     <Button
       type="submit"
       className={cn('bg-indigo-500 flex items-center', className)}
-      disabled={loading}
       {...props}
     >
       {loading ? <Loader2 className="animate-spin" /> : <SentIcon size={16} />}

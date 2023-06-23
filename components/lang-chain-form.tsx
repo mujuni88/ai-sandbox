@@ -10,18 +10,18 @@ import { Bot, User } from 'lucide-react';
 import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
 
 export const metadata: Metadata = {
-  title: 'AI Sandbox',
-  description: 'A sandbox for AI experiments',
+  title: 'LangChain AI Chat Box',
+  description: 'This chat is powered by Langchain framework',
 };
 
-export default function TravelBudgetForm() {
+export default function LangChainForm() {
   const { state, handleSubmit, stopStream } = useChat();
   const { isLoading, messages } = state;
   const { textAreaRef, handleChange, value, resetValue } =
     useAutoResizeTextarea();
 
   return (
-    <div className="grid w-full grid-rows-[1fr_auto] bg-white/40 items-start">
+    <div className="grid w-full grid-rows-[1fr_auto] items-start">
       <div className="grid items-start gap-3">
         {messages.map((msg) => (
           <div key={msg.id} className={cn('grid gap-3 grid-cols-[auto_1fr]')}>
@@ -30,7 +30,7 @@ export default function TravelBudgetForm() {
               className={cn('relative p-5 rounded-2xl rounded-bl-none', {
                 'bg-gray-200':
                   msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
-                'bg-indigo-100':
+                'bg-purple-100':
                   msg.role === ChatCompletionRequestMessageRoleEnum.User,
               })}
             >
@@ -38,7 +38,7 @@ export default function TravelBudgetForm() {
                 className={cn({
                   'bg-gray-200':
                     msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
-                  'bg-indigo-100':
+                  'bg-purple-100':
                     msg.role === ChatCompletionRequestMessageRoleEnum.User,
                 })}
               />
@@ -50,7 +50,7 @@ export default function TravelBudgetForm() {
 
       <div
         className={cn(
-          'w-full my-6 p-1 rounded-xl shadow-md bg-white shadow-indigo-300/50'
+          'w-full my-6 p-1 rounded-xl shadow-md bg-white shadow-purple-300/50'
         )}
       >
         <form
@@ -86,7 +86,7 @@ export default function TravelBudgetForm() {
             disabled={!value && !isLoading}
             loading={isLoading}
             className={cn(
-              'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40'
+              'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40 bg-purple-800'
             )}
           />
         </form>
@@ -110,7 +110,7 @@ const Avatar = ({
         {
           'bg-gray-500':
             role === ChatCompletionRequestMessageRoleEnum.Assistant,
-          'bg-indigo-500': role === ChatCompletionRequestMessageRoleEnum.User,
+          'bg-purple-500': role === ChatCompletionRequestMessageRoleEnum.User,
         },
         className
       )}
