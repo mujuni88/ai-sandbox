@@ -1,13 +1,14 @@
 'use client';
-import AiResponse from '@/components/ai-response';
 import { SubmitButton } from '@/components/submit-button';
 import { Metadata } from 'next';
 import { Textarea } from './ui/textarea';
 import { useChat } from '../hooks/useChat';
 import { cn } from '@/lib/utils';
-import { ChatCompletionRequestMessageRoleEnum } from 'openai';
-import { Bot, User } from 'lucide-react';
 import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
+import { ChatMessage } from './chat-message';
+import { useEnterSubmit } from '@/hooks/useEnterSubmit';
+import { ChatCompletionRequestMessageRoleEnum } from 'openai';
+import { Avatar } from './avatar';
 
 export const metadata: Metadata = {
   title: 'LangChain AI Chat Box',
@@ -19,32 +20,29 @@ export default function LangChainForm() {
   const { isLoading, messages } = state;
   const { textAreaRef, handleChange, value, resetValue } =
     useAutoResizeTextarea();
+  const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
     <div className="grid w-full grid-rows-[1fr_auto] items-start">
       <div className="grid items-start gap-3">
         {messages.map((msg) => (
-          <div key={msg.id} className={cn('grid gap-3 grid-cols-[auto_1fr]')}>
-            <Avatar role={msg.role} className="self-end" />
-            <div
-              className={cn('relative p-5 rounded-2xl rounded-bl-none', {
-                'bg-gray-200':
-                  msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
-                'bg-purple-100':
-                  msg.role === ChatCompletionRequestMessageRoleEnum.User,
-              })}
-            >
-              <SpeechBubble
-                className={cn({
-                  'bg-gray-200':
-                    msg.role === ChatCompletionRequestMessageRoleEnum.Assistant,
-                  'bg-purple-100':
+          <ChatMessage
+            avatar={
+              <Avatar
+                role={msg.role}
+                className={cn('self-end', {
+                  'bg-purple-500':
                     msg.role === ChatCompletionRequestMessageRoleEnum.User,
                 })}
               />
-              <AiResponse text={msg.content} />
-            </div>
-          </div>
+            }
+            message={msg}
+            key={msg.id}
+            className={cn({
+              'bg-purple-100':
+                msg.role === ChatCompletionRequestMessageRoleEnum.User,
+            })}
+          />
         ))}
       </div>
 
@@ -65,6 +63,7 @@ export default function LangChainForm() {
             textAreaRef.current?.focus();
           }}
           className="grid gap-3 grid-cols-[1fr_auto] place-items-center"
+          ref={formRef}
         >
           <Textarea
             ref={textAreaRef}
@@ -80,6 +79,7 @@ export default function LangChainForm() {
             style={{
               scrollbarColor: '#a0aec0 #edf2f7',
             }}
+            onKeyDown={onKeyDown}
           />
           <SubmitButton
             size={'sm'}
@@ -94,37 +94,3 @@ export default function LangChainForm() {
     </div>
   );
 }
-
-const Avatar = ({
-  className,
-  role,
-}: {
-  role: ChatCompletionRequestMessageRoleEnum;
-  className?: string;
-}) => {
-  const user = role === ChatCompletionRequestMessageRoleEnum.User;
-  return (
-    <span
-      className={cn(
-        'text-center font-bold text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0',
-        {
-          'bg-gray-500':
-            role === ChatCompletionRequestMessageRoleEnum.Assistant,
-          'bg-purple-500': role === ChatCompletionRequestMessageRoleEnum.User,
-        },
-        className
-      )}
-    >
-      {user ? <User className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
-    </span>
-  );
-};
-
-const SpeechBubble = ({ className }: { className?: string }) => (
-  <div
-    className={cn(
-      'w-3 h-3 absolute bottom-0 -left-[0.7rem] clip-path-polygon-[100%_0,_0%_100%,_100%_100%]',
-      className
-    )}
-  />
-);
