@@ -1,11 +1,7 @@
+import { Message } from '@/lib/data';
 import { ChatCompletionResponseMessageRoleEnum } from 'openai';
 import { useCallback, useReducer, useRef } from 'react';
 
-export type Message = {
-  id?: string;
-  content: string;
-  role: ChatCompletionResponseMessageRoleEnum;
-};
 type State = {
   messages: Message[];
   isLoading: boolean;

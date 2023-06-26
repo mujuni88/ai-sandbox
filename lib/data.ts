@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TravelStyle } from './constants';
+import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 
 export const querySchema = z.object({
   destination: z
@@ -36,3 +37,19 @@ export const querySchema = z.object({
 });
 
 export type Query = z.infer<typeof querySchema>;
+
+export const messageSchema = z.object({
+  id: z.string().optional(),
+  role: z.enum([
+    ChatCompletionRequestMessageRoleEnum.User,
+    ChatCompletionRequestMessageRoleEnum.System,
+    ChatCompletionRequestMessageRoleEnum.Assistant,
+  ]),
+  content: z.string(),
+});
+
+export const messagesSchema = z.object({
+  messages: z.array(messageSchema),
+});
+
+export type Message = z.infer<typeof messageSchema>;

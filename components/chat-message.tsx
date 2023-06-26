@@ -1,13 +1,14 @@
 'use client';
 import AiResponse from '@/components/ai-response';
-import { Message } from '../hooks/useChat';
 import { cn } from '@/lib/utils';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 import { Check, Copy } from 'lucide-react';
-import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import { useCopyToClipboard } from '@/lib/hooks/useCopyToClipboard';
 import { Button } from './ui/button';
 import { Avatar } from './avatar';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
+import { Message } from '@/lib/data';
+import { useScrollIntoView } from '@/lib/hooks/useScrollIntoView';
 
 export function ChatMessage({
   message,
@@ -19,8 +20,15 @@ export function ChatMessage({
   avatar?: ReactElement;
 }) {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 1000 });
+  const { scrollEl, scrollIntoView } = useScrollIntoView<HTMLDivElement>();
+
+  useEffect(() => {
+    scrollIntoView();
+  }, [message, scrollIntoView]);
+
   return (
     <div
+      ref={scrollEl}
       key={message.id}
       className={cn('grid gap-3 grid-cols-[auto_1fr] group relative')}
     >

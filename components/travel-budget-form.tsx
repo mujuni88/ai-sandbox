@@ -2,10 +2,10 @@
 import { SubmitButton } from '@/components/submit-button';
 import { Metadata } from 'next';
 import { Textarea } from './ui/textarea';
-import { useChat } from '../hooks/useChat';
+import { useChat } from '../lib/hooks/useChat';
 import { cn } from '@/lib/utils';
-import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
-import { useEnterSubmit } from '@/hooks/useEnterSubmit';
+import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
+import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
 import { ChatMessage } from './chat-message';
 
 export const metadata: Metadata = {

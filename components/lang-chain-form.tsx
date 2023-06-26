@@ -2,13 +2,11 @@
 import { SubmitButton } from '@/components/submit-button';
 import { Metadata } from 'next';
 import { Textarea } from './ui/textarea';
-import { useChat } from '../hooks/useChat';
 import { cn } from '@/lib/utils';
-import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea';
+import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
+import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
+import { useLangChainStream } from '@/lib/hooks/useLangChain';
 import { ChatMessage } from './chat-message';
-import { useEnterSubmit } from '@/hooks/useEnterSubmit';
-import { ChatCompletionRequestMessageRoleEnum } from 'openai';
-import { Avatar } from './avatar';
 
 export const metadata: Metadata = {
   title: 'LangChain AI Chat Box',
@@ -16,8 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default function LangChainForm() {
-  const { state, handleSubmit, stopStream } = useChat();
-  const { isLoading, messages } = state;
+  const { handleSubmit, isMutating, data } = useLangChainStream();
   const { textAreaRef, handleChange, value, resetValue } =
     useAutoResizeTextarea();
   const { formRef, onKeyDown } = useEnterSubmit();
@@ -25,24 +22,8 @@ export default function LangChainForm() {
   return (
     <div className="grid w-full grid-rows-[1fr_auto] items-start">
       <div className="grid items-start gap-3">
-        {messages.map((msg) => (
-          <ChatMessage
-            avatar={
-              <Avatar
-                role={msg.role}
-                className={cn('self-end', {
-                  'bg-purple-500':
-                    msg.role === ChatCompletionRequestMessageRoleEnum.User,
-                })}
-              />
-            }
-            message={msg}
-            key={msg.id}
-            className={cn({
-              'bg-purple-100':
-                msg.role === ChatCompletionRequestMessageRoleEnum.User,
-            })}
-          />
+        {data?.messages?.map((message, index) => (
+          <ChatMessage key={index} message={message} />
         ))}
       </div>
 
@@ -54,11 +35,7 @@ export default function LangChainForm() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (isLoading) {
-              stopStream();
-              return;
-            }
-            handleSubmit(e);
+            handleSubmit(value);
             resetValue();
             textAreaRef.current?.focus();
           }}
@@ -83,8 +60,8 @@ export default function LangChainForm() {
           />
           <SubmitButton
             size={'sm'}
-            disabled={!value && !isLoading}
-            loading={isLoading}
+            disabled={!value || isMutating}
+            loading={isMutating}
             className={cn(
               'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40 bg-purple-800'
             )}

@@ -31,7 +31,6 @@ export async function getOpenAiStream(
         ...messages,
       ],
       temperature: 0.5,
-      stop: ['\n'],
       stream: true,
     },
     { responseType: 'stream' }

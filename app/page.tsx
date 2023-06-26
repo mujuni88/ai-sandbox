@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <main className="container h-[100dvh] max-h-[100dvh] pt-16">
       <Tabs
-        defaultValue="openAi"
+        defaultValue="langChain"
         className="w-full h-full pt-6 md:w-[60%] mx-auto grid grid-rows-[auto_1fr]"
       >
         <TabsList className="w-full grid grid-cols-2 mb-6">
