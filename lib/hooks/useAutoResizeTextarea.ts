@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-export const useAutoResizeTextarea = () => {
-  const [value, setValue] = useState('');
+export const useAutoResizeTextarea = <V extends string>(value: V) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -16,12 +15,7 @@ export const useAutoResizeTextarea = () => {
     $textArea.style.height = $textArea.scrollHeight + 'px';
   }, [value]);
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(event.target.value);
-  };
-
   const resetValue = () => {
-    setValue('');
     if (!textAreaRef.current) return;
 
     // Reset the height to 0px so that it can be shrinked
@@ -31,8 +25,6 @@ export const useAutoResizeTextarea = () => {
 
   return {
     textAreaRef,
-    handleChange,
-    value,
     resetValue,
   };
 };

@@ -1,7 +1,8 @@
-import { Metadata } from 'next';
+import { Agents } from '@/components/agents';
+import LangChainForm from '@/components/lang-chain-form';
 import TravelBudgetForm from '@/components/travel-budget-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import LangChainForm from '@/components/lang-chain-form';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -12,10 +13,10 @@ export default async function Home() {
   return (
     <main className="container h-[100dvh] max-h-[100dvh] pt-16">
       <Tabs
-        defaultValue="langChain"
+        defaultValue="agent"
         className="w-full h-full pt-6 md:w-[60%] mx-auto grid grid-rows-[auto_1fr]"
       >
-        <TabsList className="w-full grid grid-cols-2 mb-6">
+        <TabsList className="w-full grid grid-flow-col auto-cols-fr mb-6">
           <TabsTrigger
             value="openAi"
             className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white"
@@ -28,12 +29,21 @@ export default async function Home() {
           >
             LangChain
           </TabsTrigger>
+          <TabsTrigger
+            value="agent"
+            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+          >
+            Agent
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="openAi" asChild>
           <TravelBudgetForm />
         </TabsContent>
         <TabsContent value="langChain" asChild>
           <LangChainForm />
+        </TabsContent>
+        <TabsContent value="agent" asChild>
+          <Agents />
         </TabsContent>
       </Tabs>
     </main>

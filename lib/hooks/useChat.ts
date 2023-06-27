@@ -1,9 +1,9 @@
-import { Message } from '@/lib/data';
+import { CreateMessage } from 'ai';
 import { ChatCompletionResponseMessageRoleEnum } from 'openai';
 import { useCallback, useReducer, useRef } from 'react';
 
 type State = {
-  messages: Message[];
+  messages: CreateMessage[];
   isLoading: boolean;
 };
 
@@ -13,11 +13,11 @@ const STREAMED_MSG_ID = 'streamedMessage';
 type Action =
   | {
       type: 'ADD_MESSAGE';
-      payload: Message;
+      payload: CreateMessage;
     }
   | {
       type: 'SET_STREAMED_MESSAGE';
-      payload: Message;
+      payload: CreateMessage;
     }
   | {
       type: 'SET_IS_LOADING';
@@ -27,7 +27,7 @@ type Action =
       type: 'RESET';
     };
 
-const messages: Message[] = [
+const messages: CreateMessage[] = [
   {
     content: "I'm traveling to Panama, please help\n",
     role: ChatCompletionResponseMessageRoleEnum.User,
@@ -117,7 +117,7 @@ export const useChat = (reducer: Reducer = chatReducer) => {
   });
 
   const addMessage = useCallback(
-    (message: Optional<Message, 'id'>) => {
+    (message: Optional<CreateMessage, 'id'>) => {
       dispatch({
         type: 'ADD_MESSAGE',
         payload: {
@@ -130,7 +130,7 @@ export const useChat = (reducer: Reducer = chatReducer) => {
   );
 
   const setCurrentMessage = useCallback(
-    (message: Message) => {
+    (message: CreateMessage) => {
       dispatch({
         type: 'SET_STREAMED_MESSAGE',
         payload: {

@@ -7,28 +7,21 @@ import { useCopyToClipboard } from '@/lib/hooks/useCopyToClipboard';
 import { Button } from './ui/button';
 import { Avatar } from './avatar';
 import { ReactElement, useEffect } from 'react';
-import { Message } from '@/lib/data';
-import { useScrollIntoView } from '@/lib/hooks/useScrollIntoView';
+import { MessageSchema } from '@/lib/data';
 
 export function ChatMessage({
   message,
   className,
   avatar,
 }: {
-  message: Message;
+  message: MessageSchema;
   className?: string;
   avatar?: ReactElement;
 }) {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 1000 });
-  const { scrollEl, scrollIntoView } = useScrollIntoView<HTMLDivElement>();
-
-  useEffect(() => {
-    scrollIntoView();
-  }, [message, scrollIntoView]);
 
   return (
     <div
-      ref={scrollEl}
       key={message.id}
       className={cn('grid gap-3 grid-cols-[auto_1fr] group relative')}
     >

@@ -1,12 +1,13 @@
 'use client';
 import { SubmitButton } from '@/components/submit-button';
-import { Metadata } from 'next';
-import { Textarea } from './ui/textarea';
-import { useChat } from '../lib/hooks/useChat';
-import { cn } from '@/lib/utils';
+import { sampleMessages } from '@/lib/data';
 import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
 import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
+import { cn } from '@/lib/utils';
+import { useChat } from 'ai/react';
+import { Metadata } from 'next';
 import { ChatMessage } from './chat-message';
+import { Textarea } from './ui/textarea';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -15,10 +16,12 @@ export const metadata: Metadata = {
 
 export default function TravelBudgetForm() {
   const { formRef, onKeyDown } = useEnterSubmit();
-  const { state, handleSubmit, stopStream } = useChat();
-  const { isLoading, messages } = state;
-  const { textAreaRef, handleChange, value, resetValue } =
-    useAutoResizeTextarea();
+  const { messages, handleSubmit, handleInputChange, input, isLoading, stop } =
+    useChat({
+      api: '/api/chat',
+      initialMessages: [...sampleMessages],
+    });
+  const { textAreaRef, resetValue } = useAutoResizeTextarea(input);
 
   return (
     <div className="grid w-full grid-rows-[1fr_auto] bg-white/40 items-start">
@@ -37,7 +40,7 @@ export default function TravelBudgetForm() {
           onSubmit={(e) => {
             e.preventDefault();
             if (isLoading) {
-              stopStream();
+              stop();
               return;
             }
             handleSubmit(e);
@@ -53,8 +56,8 @@ export default function TravelBudgetForm() {
             name="content"
             id="content"
             placeholder="Send a message"
-            value={value}
-            onChange={handleChange}
+            value={input}
+            onChange={handleInputChange}
             rows={1}
             className={cn(
               'border-none max-h-52 resize-none overflow-auto p-3 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base'
@@ -65,7 +68,7 @@ export default function TravelBudgetForm() {
           />
           <SubmitButton
             size={'sm'}
-            disabled={!value && !isLoading}
+            disabled={!input && !isLoading}
             loading={isLoading}
             className={cn(
               'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40'

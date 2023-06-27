@@ -1,12 +1,12 @@
 'use client';
 import { SubmitButton } from '@/components/submit-button';
-import { Metadata } from 'next';
-import { Textarea } from './ui/textarea';
-import { cn } from '@/lib/utils';
 import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
 import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
-import { useLangChainStream } from '@/lib/hooks/useLangChain';
+import { cn } from '@/lib/utils';
+import { useChat } from 'ai/react';
+import { Metadata } from 'next';
 import { ChatMessage } from './chat-message';
+import { Textarea } from './ui/textarea';
 
 export const metadata: Metadata = {
   title: 'LangChain AI Chat Box',
@@ -14,16 +14,16 @@ export const metadata: Metadata = {
 };
 
 export default function LangChainForm() {
-  const { handleSubmit, isMutating, data } = useLangChainStream();
-  const { textAreaRef, handleChange, value, resetValue } =
-    useAutoResizeTextarea();
+  const { messages, input, handleInputChange, handleSubmit, stop, isLoading } =
+    useChat({ api: '/api/langchain' });
+  const { textAreaRef, resetValue } = useAutoResizeTextarea(input);
   const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
     <div className="grid w-full grid-rows-[1fr_auto] items-start">
       <div className="grid items-start gap-3">
-        {data?.messages?.map((message, index) => (
-          <ChatMessage key={index} message={message} />
+        {messages?.map((message) => (
+          <ChatMessage key={message.id} message={message} />
         ))}
       </div>
 
@@ -35,7 +35,7 @@ export default function LangChainForm() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleSubmit(value);
+            handleSubmit(e);
             resetValue();
             textAreaRef.current?.focus();
           }}
@@ -47,8 +47,8 @@ export default function LangChainForm() {
             name="content"
             id="content"
             placeholder="Send a message"
-            value={value}
-            onChange={handleChange}
+            value={input}
+            onChange={handleInputChange}
             rows={1}
             className={cn(
               'border-none max-h-52 resize-none overflow-auto p-3 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base'
@@ -60,8 +60,8 @@ export default function LangChainForm() {
           />
           <SubmitButton
             size={'sm'}
-            disabled={!value || isMutating}
-            loading={isMutating}
+            disabled={!input || isLoading}
+            loading={isLoading}
             className={cn(
               'col-start-2 col-end-3 row-start-1 row-end-2 mr-5 transition-colors disabled:opacity-40 bg-purple-800'
             )}

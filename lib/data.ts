@@ -1,6 +1,11 @@
+import { CreateMessage, Message } from 'ai';
+import { nanoid } from 'nanoid';
+import {
+  ChatCompletionRequestMessageRoleEnum,
+  ChatCompletionResponseMessageRoleEnum,
+} from 'openai';
 import { z } from 'zod';
 import { TravelStyle } from './constants';
-import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 
 export const querySchema = z.object({
   destination: z
@@ -38,8 +43,9 @@ export const querySchema = z.object({
 
 export type Query = z.infer<typeof querySchema>;
 
-export const messageSchema = z.object({
+export const messageSchema: z.ZodType<Message | CreateMessage> = z.object({
   id: z.string().optional(),
+  createdAt: z.date().optional(),
   role: z.enum([
     ChatCompletionRequestMessageRoleEnum.User,
     ChatCompletionRequestMessageRoleEnum.System,
@@ -52,4 +58,18 @@ export const messagesSchema = z.object({
   messages: z.array(messageSchema),
 });
 
-export type Message = z.infer<typeof messageSchema>;
+export type MessageSchema = z.infer<typeof messageSchema>;
+
+export const sampleMessages: Message[] = [
+  {
+    id: nanoid(),
+    content: "I'm traveling to Panama, please help\n",
+    role: ChatCompletionResponseMessageRoleEnum.User,
+  },
+  {
+    id: nanoid(),
+    content:
+      "Hello! Welcome to Buza Agency. I'll be glad to assist you with your travel plans to Panama. Can you please provide me with some more information so I can better understand your needs for this trip? ",
+    role: ChatCompletionResponseMessageRoleEnum.Assistant,
+  },
+];

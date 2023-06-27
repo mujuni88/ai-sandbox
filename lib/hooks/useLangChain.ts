@@ -1,18 +1,18 @@
-import { Message } from '@/lib/data';
+import { MessageSchema } from '@/lib/data';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 type RequestBody = {
-  messages: Message[];
+  messages: MessageSchema[];
 };
 
-const fetchKey = `/api/lang`;
+const fetchKey = `/api/langchain`;
 
 function updatePrompt(
   url: string,
   { arg }: { arg: RequestBody }
-): Promise<Message> {
+): Promise<MessageSchema> {
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(arg),
@@ -24,12 +24,12 @@ export const useLangChain = () => {
   const { trigger, isMutating } = useSWRMutation(fetchKey, updatePrompt);
 
   const handleSubmit = async (content: string) => {
-    const userMessage: Message = {
+    const userMessage: MessageSchema = {
       content,
       role: 'user',
     };
 
-    const latestMessages: Message[] = data?.messages
+    const latestMessages: MessageSchema[] = data?.messages
       ? [...data.messages, userMessage]
       : [userMessage];
 
@@ -65,12 +65,12 @@ export const useLangChainStream = () => {
   const { trigger, isMutating } = useSWRMutation(fetchKey, updatePromptStream);
 
   const handleSubmit = async (content: string) => {
-    const userMessage: Message = {
+    const userMessage: MessageSchema = {
       content,
       role: 'user',
     };
 
-    const latestMessages: Message[] = data?.messages
+    const latestMessages: MessageSchema[] = data?.messages
       ? [...data.messages, userMessage]
       : [userMessage];
 
