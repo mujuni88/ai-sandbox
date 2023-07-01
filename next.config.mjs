@@ -1,7 +1,7 @@
 import nextMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
-import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypePrettyCode from 'rehype-pretty-code';
+import remarkGfm from 'remark-gfm';
 
 const options = {
   // Use one of Shiki's packaged themes
@@ -40,8 +40,6 @@ const withMDX = nextMDX({
 const nextConfig = {
   experimental: {
     serverActions: true,
-    useFormStatus: true,
-    // mdxRs: true,
   },
 };
 

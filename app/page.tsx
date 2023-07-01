@@ -1,4 +1,5 @@
 import { Agents } from '@/components/agents';
+import { Docs } from '@/components/docs';
 import LangChainForm from '@/components/lang-chain-form';
 import TravelBudgetForm from '@/components/travel-budget-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +14,7 @@ export default async function Home() {
   return (
     <main className="container h-[100dvh] max-h-[100dvh] pt-16">
       <Tabs
-        defaultValue="agent"
+        defaultValue="docs"
         className="w-full h-full pt-6 md:w-[60%] mx-auto grid grid-rows-[auto_1fr]"
       >
         <TabsList className="w-full grid grid-flow-col auto-cols-fr mb-6">
@@ -31,9 +32,15 @@ export default async function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="agent"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >
             Agent
+          </TabsTrigger>
+          <TabsTrigger
+            value="docs"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
+          >
+            Docs
           </TabsTrigger>
         </TabsList>
         <TabsContent value="openAi" asChild>
@@ -44,6 +51,9 @@ export default async function Home() {
         </TabsContent>
         <TabsContent value="agent" asChild>
           <Agents />
+        </TabsContent>
+        <TabsContent value="docs" asChild>
+          <Docs />
         </TabsContent>
       </Tabs>
     </main>

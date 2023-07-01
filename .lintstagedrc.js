@@ -7,5 +7,4 @@ const buildEslintCommand = (filenames) =>
 
 module.exports = {
   '*.{js,jsx,ts,tsx}': [buildEslintCommand],
-  '*.md': 'prettier --list-different',
 };

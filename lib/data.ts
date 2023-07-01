@@ -1,9 +1,6 @@
+import { faker } from '@faker-js/faker';
 import { CreateMessage, Message } from 'ai';
-import { nanoid } from 'nanoid';
-import {
-  ChatCompletionRequestMessageRoleEnum,
-  ChatCompletionResponseMessageRoleEnum,
-} from 'openai';
+import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 import { z } from 'zod';
 import { TravelStyle } from './constants';
 
@@ -60,16 +57,22 @@ export const messagesSchema = z.object({
 
 export type MessageSchema = z.infer<typeof messageSchema>;
 
-export const sampleMessages: Message[] = [
-  {
-    id: nanoid(),
-    content: "I'm traveling to Panama, please help\n",
-    role: ChatCompletionResponseMessageRoleEnum.User,
-  },
-  {
-    id: nanoid(),
-    content:
-      "Hello! Welcome to Buza Agency. I'll be glad to assist you with your travel plans to Panama. Can you please provide me with some more information so I can better understand your needs for this trip? ",
-    role: ChatCompletionResponseMessageRoleEnum.Assistant,
-  },
-];
+export const generateMessages = (num: number = 10) => {
+  const messages = [];
+
+  for (let i = 0; i < num; i++) {
+    const id = faker.string.uuid();
+    const role = faker.helpers.arrayElement(['user', 'assistant']);
+    const content = faker.lorem.sentence();
+
+    const message = {
+      id,
+      role,
+      content,
+    };
+
+    messages.push(message);
+  }
+
+  return messages as Message[];
+};

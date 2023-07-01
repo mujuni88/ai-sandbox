@@ -1,6 +1,6 @@
 'use client';
 import { SubmitButton } from '@/components/submit-button';
-import { sampleMessages } from '@/lib/data';
+import { generateMessages } from '@/lib/data';
 import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
 import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
 import { cn } from '@/lib/utils';
@@ -19,7 +19,7 @@ export default function TravelBudgetForm() {
   const { messages, handleSubmit, handleInputChange, input, isLoading, stop } =
     useChat({
       api: '/api/chat',
-      initialMessages: [...sampleMessages],
+      initialMessages: [...generateMessages(10)],
     });
   const { textAreaRef, resetValue } = useAutoResizeTextarea(input);
 

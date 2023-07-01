@@ -1,3 +1,4 @@
+import { initializeAgentExecutorWithOptions } from 'langchain/agents';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import {
   AIChatMessage,
@@ -6,7 +7,11 @@ import {
   StoredMessage,
   SystemChatMessage,
 } from 'langchain/schema';
+import { DynamicStructuredTool, SerpAPI } from 'langchain/tools';
+import { Calculator } from 'langchain/tools/calculator';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
+import { env } from 'process';
+import { z } from 'zod';
 import { MessageSchema } from './data';
 
 export function langchainStream(messages: BaseChatMessage[]) {
@@ -61,3 +66,51 @@ export function convertToMessage(sm: StoredMessage): MessageSchema {
         : ChatCompletionRequestMessageRoleEnum.User,
   };
 }
+
+export const langchainAgents = async (messages: BaseChatMessage[]) => {
+  const model = new ChatOpenAI({
+    temperature: 0,
+  });
+
+  const tools = [
+    new SerpAPI(env.SERP_API_KEY, {
+      location: 'California,Redwood City,United States',
+      hl: 'en',
+      gl: 'us',
+    }),
+    new Calculator(),
+    new DynamicStructuredTool({
+      name: 'random-name-generator',
+      description:
+        'Generates random names between three inputs. firstLetter, lastLetter, and length',
+      schema: z.object({
+        firstLetter: z.string().min(1).max(1),
+        lastLetter: z.string().min(1).max(1),
+        length: z.number().int().min(2).max(10),
+      }),
+      func: async ({ firstLetter, lastLetter, length }) => {
+        const firstLetterCode = firstLetter.charCodeAt(0);
+        const lastLetterCode = lastLetter.charCodeAt(0);
+
+        let letters = '';
+        Array.from({ length: length - 2 }).forEach(() => {
+          const randomLetterCode = Math.floor(
+            Math.random() * (lastLetterCode - firstLetterCode) + firstLetterCode
+          );
+          letters += String.fromCharCode(randomLetterCode);
+        });
+
+        return `${firstLetter}${letters}${lastLetter}`;
+      },
+    }),
+  ];
+
+  const executor = await initializeAgentExecutorWithOptions(tools, model, {
+    agentType: 'openai-functions',
+    verbose: true,
+  });
+
+  const result = await executor.run(messages.at(-1)?.text);
+
+  return { result };
+};
