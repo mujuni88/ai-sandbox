@@ -1,21 +1,47 @@
 'use client';
+import { ChatMessage } from '@/components/chat-message';
 import { SubmitButton } from '@/components/submit-button';
+import { Textarea } from '@/components/ui/textarea';
+import { ChatSchema } from '@/lib/data';
 import { useAutoResizeTextarea } from '@/lib/hooks/useAutoResizeTextarea';
 import { useEnterSubmit } from '@/lib/hooks/useEnterSubmit';
 import { cn } from '@/lib/utils';
+import { Message } from 'ai';
 import { useChat } from 'ai/react';
-import { Metadata } from 'next';
-import { ChatMessage } from './chat-message';
-import { Textarea } from './ui/textarea';
 
-export const metadata: Metadata = {
-  title: 'LangChain AI Chat Box',
-  description: 'This chat is powered by Langchain framework',
+interface ChatProps {
+  params: {
+    id: string;
+  };
+}
+
+const saveChat = async (id: string, messages: Message[]) => {
+  const body = {
+    id,
+    messages: messages.map((message) => ({
+      ...message,
+      createdAt: message?.createdAt?.toISOString(),
+    })),
+  } satisfies ChatSchema;
+
+  const response = await fetch('/api/chatSave', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  return response.json();
 };
 
-export default function LangChainForm() {
+export default function Chat({ params }: ChatProps) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
-    useChat({ api: '/api/langchain' });
+    useChat({
+      api: '/api/langchain',
+      id: params.id,
+      sendExtraMessageFields: true,
+      onFinish: (data: Message) => {
+        saveChat(params.id, messages.concat(data));
+      },
+    });
+
   const { textAreaRef, resetValue } = useAutoResizeTextarea(input);
   const { formRef, onKeyDown } = useEnterSubmit();
 

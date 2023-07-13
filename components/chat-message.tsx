@@ -1,20 +1,21 @@
 'use client';
 import AiResponse from '@/components/ai-response';
-import { cn } from '@/lib/utils';
-import { ChatCompletionRequestMessageRoleEnum } from 'openai';
-import { Check, Copy } from 'lucide-react';
-import { useCopyToClipboard } from '@/lib/hooks/useCopyToClipboard';
-import { Button } from './ui/button';
-import { Avatar } from './avatar';
-import { ReactElement, useEffect } from 'react';
 import { MessageSchema } from '@/lib/data';
+import { useCopyToClipboard } from '@/lib/hooks/useCopyToClipboard';
+import { cn } from '@/lib/utils';
+import { Message } from 'ai';
+import { Check, Copy } from 'lucide-react';
+import { ChatCompletionRequestMessageRoleEnum } from 'openai';
+import { ReactElement } from 'react';
+import { Avatar } from './avatar';
+import { Button } from './ui/button';
 
 export function ChatMessage({
   message,
   className,
   avatar,
 }: {
-  message: MessageSchema;
+  message: MessageSchema | Message;
   className?: string;
   avatar?: ReactElement;
 }) {

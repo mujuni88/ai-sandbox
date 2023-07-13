@@ -34,7 +34,7 @@ export function Docs() {
 
       <div
         className={cn(
-          'w-full fixed px-3 left-0 right-0 bottom-0 h-[6rem] grid place-items-center shadow-inner'
+          'w-full fixed px-3 left-0 right-0 bottom-0 h-[6rem] grid place-items-center bg-white'
         )}
       >
         <form

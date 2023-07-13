@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { CreateMessage, Message } from 'ai';
+import { Message } from 'ai';
 import { ChatCompletionRequestMessageRoleEnum } from 'openai';
 import { z } from 'zod';
 import { TravelStyle } from './constants';
@@ -40,9 +40,9 @@ export const querySchema = z.object({
 
 export type Query = z.infer<typeof querySchema>;
 
-export const messageSchema: z.ZodType<Message | CreateMessage> = z.object({
+export const messageSchema = z.object({
   id: z.string().optional(),
-  createdAt: z.date().optional(),
+  createdAt: z.string().datetime().optional(),
   role: z.enum([
     ChatCompletionRequestMessageRoleEnum.User,
     ChatCompletionRequestMessageRoleEnum.System,
@@ -76,3 +76,13 @@ export const generateMessages = (num: number = 10) => {
 
   return messages as Message[];
 };
+
+export const chatSchema = z.object({
+  id: z.string(),
+  createdAt: z.string().datetime().optional(),
+  messages: z.array(messageSchema),
+});
+
+export const chatsSchema = z.array(chatSchema);
+
+export type ChatSchema = z.infer<typeof chatSchema>;

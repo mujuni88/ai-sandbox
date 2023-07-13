@@ -1,5 +1,14 @@
 import { initializeAgentExecutorWithOptions } from 'langchain/agents';
+import { ConversationChain } from 'langchain/chains';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
+import { OpenAI } from 'langchain/llms/openai';
+import { BufferMemory } from 'langchain/memory';
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+  MessagesPlaceholder,
+  SystemMessagePromptTemplate,
+} from 'langchain/prompts';
 import {
   AIChatMessage,
   BaseChatMessage,
@@ -113,4 +122,29 @@ export const langchainAgents = async (messages: BaseChatMessage[]) => {
   const result = await executor.run(messages.at(-1)?.text);
 
   return { result };
+};
+
+const memory = new BufferMemory({
+  memoryKey: 'history',
+});
+
+export const langchainMemory = async (input: string) => {
+  const model = new OpenAI({});
+
+  const chatPrompt = ChatPromptTemplate.fromPromptMessages([
+    SystemMessagePromptTemplate.fromTemplate(
+      'The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know'
+    ),
+    new MessagesPlaceholder('history'),
+    HumanMessagePromptTemplate.fromTemplate('{input}'),
+  ]);
+
+  const chain = new ConversationChain({
+    llm: model,
+    memory,
+    prompt: chatPrompt,
+    verbose: true,
+  });
+
+  return chain.predict({ input });
 };
