@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/page-header';
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -16,10 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className)}>
-        <PageHeader />
-        <div className="overflow-auto h-body">{children}</div>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <PageHeader />
+          <div className="overflow-auto h-body">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   );

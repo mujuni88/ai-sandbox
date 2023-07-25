@@ -2,6 +2,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ModeToggle } from './mode-toggle';
 
 const NavLink = ({
   isActive,
@@ -35,7 +36,7 @@ export const PageHeader = () => {
   const currentRoute = usePathname();
 
   return (
-    <header className="grid md:grid-cols-[300px_1fr] px-3 py-5 bg-primary-foreground border items-center shadow-lg">
+    <header className="grid md:grid-cols-[300px_1fr_auto] px-3 py-3 bg-primary-foreground border items-center shadow-lg overflow-hidden">
       <Link
         href={'/'}
         className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-600"
@@ -52,6 +53,7 @@ export const PageHeader = () => {
         <NavLink href="/langchain">Langchain</NavLink>
         <NavLink href="/docs">Docs</NavLink>
       </nav>
+      <ModeToggle />
     </header>
   );
 };

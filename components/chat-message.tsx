@@ -44,13 +44,14 @@ export function ChatMessage({
 
         <Button
           className="my-auto invisible group-hover:visible"
-          size={'xs'}
+          size={'icon'}
+          variant={'outline'}
           onClick={() => copyToClipboard(message.content)}
         >
           {isCopied ? (
-            <Check size={12} className="text-zinc" />
+            <Check className="text-zinc h-4 w-4" />
           ) : (
-            <Copy className="text-zinc" size={12} />
+            <Copy className="text-zinc h-4 w-4" />
           )}
         </Button>
       </div>
