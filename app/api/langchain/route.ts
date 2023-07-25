@@ -6,8 +6,6 @@ import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { SystemChatMessage } from 'langchain/schema';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-
 const systemMessage = new SystemChatMessage(
   `
   Act as a travel agent for a customer. 

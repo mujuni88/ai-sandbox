@@ -1,15 +1,13 @@
-import { NextResponse } from 'next/server';
-import { messagesSchema } from '@/lib/data';
-import { Configuration, OpenAIApi } from 'openai-edge';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { env } from '@/env';
+import { messagesSchema } from '@/lib/data';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { NextResponse } from 'next/server';
+import { Configuration, OpenAIApi } from 'openai-edge';
 
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
-export const runtime = 'edge';
 
 export async function POST(request: Request) {
   const body = await request.json();

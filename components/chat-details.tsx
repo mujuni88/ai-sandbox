@@ -40,15 +40,11 @@ const fetchChat = async (url: string) => {
   return chatSchema.parse(data);
 };
 
-export const ChatDetails = (async ({ params }: ChatProps) => {
+export const ChatDetails = ({ params }: ChatProps) => {
   const messageRef = useRef<Message[] | null>(null);
   const { data } = useSWR(
     `/api/langchain?` + new URLSearchParams({ id: params.id }),
-    fetchChat,
-    {
-      suspense: true,
-      fallbackData: { id: 'error', messages: [] },
-    }
+    fetchChat
   );
 
   const initialMessages = (data?.messages ?? []).map((message) => ({
@@ -74,8 +70,8 @@ export const ChatDetails = (async ({ params }: ChatProps) => {
   const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
-    <div className="grid w-full items-start relative overflow-y-auto scrollbar-thin  scrollbar-thumb-stone-700 scrollbar-thumb-rounded-lg">
-      <div className="grid items-start gap-3 pt-4 pb-36 container">
+    <div className="grid w-full items-start relative overflow-y-auto mb-36 pb-4 mt-4 scrollbar-thin">
+      <div className="grid items-start gap-3 pt-4 container">
         {messages?.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
@@ -83,18 +79,18 @@ export const ChatDetails = (async ({ params }: ChatProps) => {
 
       <div
         className={cn(
-          'fixed bottom-0 right-0 h-32 grid place-items-center px-2 w-full md:w-[calc(100vw_-_300px)] bg-stone-500 bg-gradient-to-t from-stone-500 to-stone-400'
+          'fixed bottom-0 right-0 h-32 grid place-items-center px-2 w-full md:w-[calc(100vw_-_300px)] bg-secondary bg-gradient-to-t from-secondary to-primary/5'
         )}
       >
         <form
+          ref={formRef}
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(e);
             resetValue();
             textAreaRef.current?.focus();
           }}
-          className="grid gap-3 grid-cols-[1fr_auto] place-items-center container bg-white rounded-sm p-0"
-          ref={formRef}
+          className="grid gap-3 grid-cols-[1fr_auto] place-items-center container rounded-sm p-0"
         >
           <Textarea
             ref={textAreaRef}
@@ -105,11 +101,8 @@ export const ChatDetails = (async ({ params }: ChatProps) => {
             onChange={handleInputChange}
             rows={1}
             className={cn(
-              'border-none max-h-52 resize-none overflow-auto p-3 focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base'
+              'border-none max-h-52 resize-none overflow-auto p-3 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base bg-card text-card-foreground shadow-lg'
             )}
-            style={{
-              scrollbarColor: '#a0aec0 #edf2f7',
-            }}
             onKeyDown={onKeyDown}
           />
           <SubmitButton
@@ -125,4 +118,4 @@ export const ChatDetails = (async ({ params }: ChatProps) => {
       </div>
     </div>
   );
-}) as unknown as React.FC<ChatProps>;
+};

@@ -2,8 +2,6 @@ import { chatSchema } from '@/lib/data';
 import { addMessageToChat } from '@/lib/redis';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-
 export async function POST(request: Request) {
   const body = await request.json();
   const chat = chatSchema.safeParse(body);

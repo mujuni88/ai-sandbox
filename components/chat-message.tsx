@@ -45,7 +45,6 @@ export function ChatMessage({
         <Button
           className="my-auto invisible group-hover:visible"
           size={'xs'}
-          variant={'ghost'}
           onClick={() => copyToClipboard(message.content)}
         >
           {isCopied ? (
