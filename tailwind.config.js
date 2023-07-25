@@ -16,6 +16,10 @@ module.exports = {
       },
     },
     extend: {
+      height: {
+        header: '70px',
+        body: `calc(100vh - 70px)`,
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -77,5 +81,6 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('tailwind-clip-path'),
     require('tailwindcss-hero-patterns'),
+    require('tailwind-scrollbar')({ nocompatible: true }),
   ],
 };

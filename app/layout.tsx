@@ -17,9 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn(inter.className, 'light')}>
+      <body className={cn(inter.className, 'dark')}>
         <PageHeader />
-        {children}
+        <div className="overflow-auto h-body">{children}</div>
       </body>
     </html>
   );

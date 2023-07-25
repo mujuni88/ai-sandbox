@@ -1,6 +1,6 @@
 import { messagesSchema } from '@/lib/data';
 import { convertToBaseChatMessage } from '@/lib/langchain';
-import { getChatById } from '@/lib/reddis';
+import { getChatById } from '@/lib/redis';
 import { LangChainStream, StreamingTextResponse } from 'ai';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { SystemChatMessage } from 'langchain/schema';
@@ -29,12 +29,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: 'id is required' }, { status: 400 });
   }
 
-  const chat = getChatById(id);
-
-  console.log('id', id);
-  console.log('chat', chat);
-
-  return NextResponse.json({ messages: [] });
+  const chat = await getChatById(id);
+  return NextResponse.json(chat);
 }
 
 export async function POST(request: Request) {

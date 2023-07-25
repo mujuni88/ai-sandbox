@@ -4,7 +4,6 @@ import LangChainForm from '@/components/lang-chain-form';
 import TravelBudgetForm from '@/components/travel-budget-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'AI Sandbox',
@@ -12,8 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  redirect('/chats');
-
   return (
     <main className="container h-[100dvh] max-h-[100dvh] pt-16">
       <Tabs

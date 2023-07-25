@@ -1,30 +1,49 @@
 import { Redis } from '@upstash/redis';
-import { ChatSchema, MessageSchema, chatSchema, chatsSchema } from './data';
+import {
+  ChatSchema,
+  MessageSchema,
+  getChatById as _getChatById,
+  chatSchema,
+  chatsSchema,
+  getChats,
+} from './data';
 
 export const redis = Redis.fromEnv();
 
 const RedisKeys = {
-  chats: (id?: string) => 'chats',
+  chats: () => 'chats',
   chatId: (id: string) => `chats:${id}`,
 };
 
 export const getAllChats = async () => {
-  const messages = await redis.json.get(RedisKeys.chats());
+  return getChats(40);
 
-  return messages ? chatsSchema.parse(messages) : [];
+  try {
+    const messages = await redis.json.get(RedisKeys.chats());
+
+    return messages ? chatsSchema.parse(messages) : [];
+  } catch (e) {
+    return getChats();
+  }
 };
 
 export const getChatById = async (id: string) => {
-  const messages = await redis.json.get(RedisKeys.chatId(id));
+  return _getChatById(id);
 
-  return messages ? chatSchema.parse(messages) : null;
+  try {
+    const messages = await redis.json.get(RedisKeys.chatId(id));
+
+    return messages ? chatSchema.parse(messages) : null;
+  } catch (error) {
+    return _getChatById(id);
+  }
 };
 
 export const addChat = async (newChat: ChatSchema) => {
   const _newChat = chatSchema.parse(newChat);
 
   const chats = await getAllChats();
-  const filteredChats = chats.filter((chat) => chat.id !== _newChat.id);
+  const filteredChats = (chats ?? []).filter((chat) => chat.id !== _newChat.id);
   const newChats = [_newChat, ...filteredChats];
 
   await redis.json.set(RedisKeys.chats(), '$', newChats);

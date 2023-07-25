@@ -1,8 +1,8 @@
 'use client';
-import { Loader2 } from 'lucide-react';
-import { Button, ButtonProps } from './ui/button';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 import { SentIcon } from './ui/SentIcon';
+import { Button, ButtonProps } from './ui/button';
 
 interface SubmitButtonProps extends ButtonProps {
   loading?: boolean;
@@ -16,7 +16,7 @@ export function SubmitButton({
   return (
     <Button
       type="submit"
-      className={cn('bg-indigo-500 flex items-center', className)}
+      className={cn('flex items-center', className)}
       {...props}
     >
       {loading ? <Loader2 className="animate-spin" /> : <SentIcon size={16} />}

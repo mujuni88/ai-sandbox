@@ -25,7 +25,7 @@ export function Docs() {
   const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
-    <div className="grid w-full items-start relative max-h-screen overflow-auto px-5">
+    <div className="grid items-start relative max-h-screen overflow-auto px-5">
       <div className="grid items-start gap-3 pb-[7rem]">
         {messages.map((message, i) => (
           <ChatMessage key={i} message={message} />
@@ -34,7 +34,7 @@ export function Docs() {
 
       <div
         className={cn(
-          'w-full fixed px-3 left-0 right-0 bottom-0 h-[6rem] grid place-items-center bg-white'
+          'w-full fixed px-3 left-0 right-0 bottom-0 h-[6rem] grid place-items-center bg-black'
         )}
       >
         <form

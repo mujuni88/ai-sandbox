@@ -1,5 +1,5 @@
 import { chatSchema } from '@/lib/data';
-import { addMessageToChat } from '@/lib/reddis';
+import { addMessageToChat } from '@/lib/redis';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
