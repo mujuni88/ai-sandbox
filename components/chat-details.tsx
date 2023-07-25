@@ -74,7 +74,7 @@ export const ChatDetails = (async ({ params }: ChatProps) => {
   const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
-    <div className="grid w-full items-start relative">
+    <div className="grid w-full items-start relative overflow-y-auto scrollbar-thin  scrollbar-thumb-stone-700 scrollbar-thumb-rounded-lg">
       <div className="grid items-start gap-3 pt-4 pb-36 container">
         {messages?.map((message) => (
           <ChatMessage key={message.id} message={message} />

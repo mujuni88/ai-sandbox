@@ -2,7 +2,6 @@ import { Redis } from '@upstash/redis';
 import {
   ChatSchema,
   MessageSchema,
-  getChatById as _getChatById,
   chatSchema,
   chatsSchema,
   getChats,
@@ -16,8 +15,6 @@ const RedisKeys = {
 };
 
 export const getAllChats = async () => {
-  return getChats(40);
-
   try {
     const messages = await redis.json.get(RedisKeys.chats());
 
@@ -28,15 +25,11 @@ export const getAllChats = async () => {
 };
 
 export const getChatById = async (id: string) => {
-  return _getChatById(id);
-
   try {
     const messages = await redis.json.get(RedisKeys.chatId(id));
 
     return messages ? chatSchema.parse(messages) : null;
-  } catch (error) {
-    return _getChatById(id);
-  }
+  } catch (error) {}
 };
 
 export const addChat = async (newChat: ChatSchema) => {
