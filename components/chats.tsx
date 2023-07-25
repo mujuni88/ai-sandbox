@@ -1,22 +1,21 @@
 import { buttonVariants } from '@/components/ui/button';
-import { ChatSchema } from '@/lib/data';
 import { getAllChats } from '@/lib/redis';
 import { cn } from '@/lib/utils';
-import { MessageSquare } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
+import { ChatItem } from './chat-item';
 
 export const Chats = (async () => {
   const chats = await getAllChats();
   return (
-    <div className="flex flex-col flex-1 h-full bg-primary-foreground py-4 gap-4 overflow-y-auto shadow-lg">
+    <div className="flex flex-col flex-1 h-full bg-primary-foreground py-4 gap-10 overflow-y-auto shadow-lg">
       <Link
         className={cn(buttonVariants(), 'mx-2')}
         href={`/chats/${nanoid(5)}`}
       >
         New Chat
       </Link>
-      <ol className="min-h-0 flex flex-col gap-2 overflow-y-auto flex-1 scrollbar-thin">
+      <ol className="min-h-0 flex flex-col gap-4 overflow-y-auto flex-1 scrollbar-thin">
         {chats.map((chat) => (
           <ChatItem key={chat.id} chat={chat} />
         ))}
@@ -24,19 +23,3 @@ export const Chats = (async () => {
     </div>
   );
 }) as unknown as React.FC;
-
-const ChatItem = ({ chat }: { chat: ChatSchema }) => {
-  return (
-    <li>
-      <Link
-        className={cn(
-          buttonVariants({ variant: 'ghost' }),
-          'grid grid-cols-[auto_1fr]'
-        )}
-        href={`/chats/${chat.id}`}
-      >
-        <MessageSquare className="mr-2" /> {chat.title ?? chat.id}
-      </Link>
-    </li>
-  );
-};

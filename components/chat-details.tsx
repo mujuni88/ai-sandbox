@@ -101,7 +101,7 @@ export const ChatDetails = ({ params }: ChatProps) => {
             onChange={handleInputChange}
             rows={1}
             className={cn(
-              'border-none max-h-52 resize-none overflow-auto p-3 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base bg-card text-card-foreground shadow-lg'
+              'border-none max-h-52 resize-none overflow-auto p-3 scroll col-start-1 col-end-3 row-start-1 row-end-2 pr-16 text-base bg-card text-card-foreground shadow-lg ring-1 ring-indigo-400 focus-visible:ring-indigo-500 focus-visible:ring-offset-0 focus-visible:ring-2'
             )}
             onKeyDown={onKeyDown}
           />
