@@ -42,6 +42,7 @@ const fetchChat = async (url: string) => {
 
 export const ChatDetails = ({ params }: ChatProps) => {
   const messageRef = useRef<Message[] | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const { data } = useSWR(
     `/api/langchain?` + new URLSearchParams({ id: params.id }),
     fetchChat
@@ -61,6 +62,10 @@ export const ChatDetails = ({ params }: ChatProps) => {
       sendExtraMessageFields: true,
       onFinish: () => {
         saveChat(params.id, messageRef.current ?? []);
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      },
+      onResponse: () => {
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
       },
     });
 
@@ -70,16 +75,19 @@ export const ChatDetails = ({ params }: ChatProps) => {
   const { formRef, onKeyDown } = useEnterSubmit();
 
   return (
-    <div className="grid w-full items-start relative overflow-y-auto mb-36 pb-4 mt-4 scrollbar-thin">
-      <div className="grid items-start gap-3 pt-4 container">
-        {messages?.map((message) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
+    <div className="h-full grid overflow-y-auto relative">
+      <div className="mt-4 overflow-y-auto scrollbar-thin">
+        <div className="container flex flex-col gap-3 flex-1">
+          {messages?.map((message) => (
+            <ChatMessage key={message.id} message={message} />
+          ))}
+        </div>
+        <div ref={scrollRef} className="h-36 bg-secondary"></div>
       </div>
 
       <div
         className={cn(
-          'fixed bottom-0 right-0 h-32 grid place-items-center px-2 w-full md:w-[calc(100vw_-_300px)] bg-secondary bg-gradient-to-t from-secondary to-primary/5'
+          'absolute bottom-0 left-0 right-0 grid place-items-center px-2 bg-transparent bg-gradient-to-b from-transparent to-secondary py-10 '
         )}
       >
         <form
@@ -90,7 +98,7 @@ export const ChatDetails = ({ params }: ChatProps) => {
             resetValue();
             textAreaRef.current?.focus();
           }}
-          className="grid gap-3 grid-cols-[1fr_auto] place-items-center container rounded-sm p-0"
+          className="grid gap-3 grid-cols-[1fr_auto] place-items-center container rounded-sm p-0 shadow-2xl shadow-black"
         >
           <Textarea
             ref={textAreaRef}
